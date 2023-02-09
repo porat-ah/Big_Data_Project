@@ -29,13 +29,13 @@ class branch:
         self.std_order_time = std_order_time
         self.toppings_dist = toppings_dist
         self.num_of_topping_dist = num_of_topping_dist
-        self.open = True
+        self._open = True
         self.order_num_gen = order_id()
 
     def create_order(self, start_time):
         id = self.order_num_gen.__next__()
         toppings, num_of_toppings = self.get_toppings()
-        order_time_length = self.get_order_time_length()
+        order_time_length = int(self.get_order_time_length())
         new_order =  order(id, num_of_toppings, toppings, start_time, order_time_length, self)
         return new_order
 
@@ -46,16 +46,16 @@ class branch:
     def get_toppings(self):
         num_of_toppings = np.random.choice([0,1,2], 1, p= self.num_of_topping_dist)
         toppings = np.random.choice(TOPPINGS, size= num_of_toppings,p= self.toppings_dist, replace= False)
-        return (toppings, num_of_toppings)
+        return (list(toppings), int(num_of_toppings[0]))
     
     def open(self):
-        self.open= True
+        self._open= True
     
     def close(self):
-        self.open = False
+        self._open = False
     
     def is_open(self):
-        return self.open
+        return self._open
 
 
 
@@ -74,10 +74,10 @@ class order:
         order_status = "in_process" if self.is_order_in_process() else "finished"
         if self.sent_count == 1 and order_status == "in_process":
             return
-        _order = pd.DataFrame({
+        _order = json.dumps({
             "id": self.id,
             "branch_id" : self.branch.branch_id,
-            "barnch_name": self.branch.name,
+            "branch_name": self.branch.name,
             "location": self.branch.loc,
             "time": str(self.time),
             "order_status": order_status,
@@ -85,10 +85,10 @@ class order:
             "toppings": self.toppings
         })
         self.sent_count += 1
-        return _order.to_json()
+        return _order
     
     def is_order_in_process(self):
-        return self.time + datetime.timedelta(minutes= self.order_time_length) <  datetime.datetime.now()
+        return self.time + datetime.timedelta(minutes= self.order_time_length) >  datetime.datetime.now()
 
 
 
@@ -123,7 +123,7 @@ class simulation_manager:
 
 
     def close_open(self, branch, time):
-        closing = time.replace(hour=branch.opening_time.hour, minute=branch.opening_time.minute, second=0, microsecond=0)
+        closing = time.replace(hour=branch.closing_time.hour, minute=branch.closing_time.minute, second=0, microsecond=0)
         opening = time.replace(hour=branch.opening_time.hour, minute=branch.opening_time.minute, second=0, microsecond=0)
         if time > closing:
             branch.branch.close()
