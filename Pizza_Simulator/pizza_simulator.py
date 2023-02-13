@@ -2,6 +2,7 @@ import numpy as np
 import json
 import pandas as pd
 import datetime
+from pizza_simulator_producer import *
 
 TOPPINGS = ['olive', 'mushrooms', 'corn', 'onion', 'tuna', 'jalapeno']
 
@@ -50,9 +51,19 @@ class branch:
     
     def open(self):
         self._open= True
+        return json.dumps({
+            "branch_id" : self.branch_id,
+            "branch_name": self.branch.name,
+            "status": "open",
+        })
     
     def close(self):
         self._open = False
+        return json.dumps({
+            "branch_id" : self.branch_id,
+            "branch_name": self.branch.name,
+            "status": "close",
+        })
     
     def is_open(self):
         return self._open
@@ -72,8 +83,8 @@ class order:
     
     def order_to_json(self):
         order_status = "in_process" if self.is_order_in_process() else "finished"
-        if self.sent_count == 1 and order_status == "in_process":
-            return
+        if (self.sent_count == 1 and order_status == "in_process") or (self.sent_count >= 1 ):
+            return 
         _order = json.dumps({
             "id": self.id,
             "branch_id" : self.branch.branch_id,
@@ -103,9 +114,9 @@ class simulation_manager:
         self.branches.append(_branch_meta_data)
 
 
-    def run_simulation(self,time): 
+    def run_simulation(self,time, producer): 
         for branch in self.branches:
-            self.close_open(branch, time)
+            produce(self.close_open(branch, time), producer)
             if branch.branch.is_open():
                 num_of_orders = np.random.choice([0, 1 ,2 ,3], size= 1, p= [.6, .25, .1,.05])
                 orders_to_create = self.num_of_orders_to_create(branch, num_of_orders)
@@ -117,7 +128,7 @@ class simulation_manager:
             if order.sent_count == 2:
                 orders_to_delete.append(order)
             else:
-                order.order_to_json()
+                produce(order.order_to_json(), producer)
         for order in orders_to_delete:
             self.orders.remove(order)
 
@@ -125,10 +136,12 @@ class simulation_manager:
     def close_open(self, branch, time):
         closing = time.replace(hour=branch.closing_time.hour, minute=branch.closing_time.minute, second=0, microsecond=0)
         opening = time.replace(hour=branch.opening_time.hour, minute=branch.opening_time.minute, second=0, microsecond=0)
-        if time > closing:
-            branch.branch.close()
-        elif time > opening:
-            branch.branch.open()
+        if time > closing and branch.branch.is_open():
+            return branch.branch.close()
+        elif time > opening and (not branch.branch.is_open()):
+            return branch.branch.open()
+        else:
+            return None
 
 
     def num_of_orders_to_create(self, branch, num):
