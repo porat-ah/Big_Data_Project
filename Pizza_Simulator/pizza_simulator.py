@@ -52,6 +52,7 @@ class branch:
     def open(self):
         self._open= True
         return json.dumps({
+            "message_type": "branch status",
             "branch_id" : self.branch_id,
             "branch_name": self.branch.name,
             "status": "open",
@@ -60,6 +61,7 @@ class branch:
     def close(self):
         self._open = False
         return json.dumps({
+            "message_type": "branch status",
             "branch_id" : self.branch_id,
             "branch_name": self.branch.name,
             "status": "close",
@@ -83,9 +85,10 @@ class order:
     
     def order_to_json(self):
         order_status = "in_process" if self.is_order_in_process() else "finished"
-        if (self.sent_count == 1 and order_status == "in_process") or (self.sent_count >= 1 ):
+        if (self.sent_count == 1 and order_status == "in_process") or (self.sent_count >= 2 ):
             return 
         _order = json.dumps({
+            "message_type": "order",
             "id": self.id,
             "branch_id" : self.branch.branch_id,
             "branch_name": self.branch.name,
@@ -109,10 +112,15 @@ class simulation_manager:
         self.branches = []
         self.orders = []
     
-    def create_branch(self, opening_time, closing_time, branch, order_prob):
+    def create_branch(self, opening_time, closing_time, branch, order_prob, producer):
         _branch_meta_data = branch_meta_data(branch, opening_time, closing_time, order_prob)
         self.branches.append(_branch_meta_data)
-
+        mes = json.dumps({
+            "message_type": "branch created",
+            "branch_id" : branch.branch_id,
+            "branch_name": branch.name
+        })
+        produce(mes, producer)
 
     def run_simulation(self,time, producer): 
         for branch in self.branches:
