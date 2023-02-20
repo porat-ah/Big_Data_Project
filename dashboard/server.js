@@ -1,48 +1,38 @@
-
-
 const express = require('express')
 const app = express();
+// var server = require('http').createServer(app);
 const socketIO = require('socket.io');
-const path = require('path');
-
+const dashboard = require('./dashboard');
+const redis = require('./redis_connector')
 const port=3000;
 
 app.use(express.static('public'))
 
 app.set('view engine', 'ejs')
 
-
-
-// app.get('/setData/:districtId/:value', function (req, res) {
-//   io.emit('newdata',{districtId:req.params.districtId,value:req.params.value})
-//   res.send(req.params.value)
-// })
+app.get('/', async (req, res) => {
+  var data = {
+    cards: dashboard.create_cards(await redis.cards_info()),
+  };
+  res.render("pages/dashboard", data)
+})
 
 
 const server = express()
   .use(app)
-  .listen(port, () => console.log(`Listening Socket on http://localhost:3000`));
+  .listen(3000, () => console.log(`Listening Socket on http://localhost:3000`));
 const io = socketIO(server);
 
-// This responds with "Hello World" on the homepage
-app.get('/', function (req, res) {
-   var data = {
-      cards: [
-         {districtId:"haifa", title: "חיפה", value: 500, unit: "חבילות", fotterIcon: "", fotterText: "נפח ממוצע", icon: "content_copy" },
-         {districtId:"dan", title: "דן", value: 1500, unit: "חבילות", fotterIcon: "", fotterText: "נפח ממוצע", icon: "store" },
-         {districtId:"central", title: "מרכז", value: 3500, unit: "חבילות", fotterIcon: "", fotterText: "נפח ממוצע", icon: "info_outline" },
-         {districtId:"south", title: "דרום", value: 700, unit: "חבילות", fotterIcon: "", fotterText: "נפח ממוצע", icon: "add_shopping_cart" }
-      ]
-   }
-   res.render("pages/dashboard", data)
-   // console.log("Got a GET request for the homepage");
-   // res.sendFile(path.join(__dirname, '/public/examples/dashboard.html'));
+io.on("connection", async (socket) => {  
+  console.log("conncted");
+  io.emit("top_5_branches", dashboard.create_bar_chart(await redis.top_5_branches()));
+  io.emit("top_5_toppings", dashboard.create_bar_chart(await redis.top_5_toppings()));
+});
+
+io.on("update", async (msg)=>{
+  console.log('update')
+  io.emit("top_5_branches", dashboard.create_bar_chart(await redis.top_5_branches()));
+  io.emit("top_5_toppings", dashboard.create_bar_chart(await redis.top_5_toppings()));
 })
-
-// app.get('/setData/:districtId/:value', function (req, res) {
-//   io.emit('newdata',{districtId:req.params.districtId,value:req.params.value})
-//   res.send(req.params.value)
-// })
-
 
 

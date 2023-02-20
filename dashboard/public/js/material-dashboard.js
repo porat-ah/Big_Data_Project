@@ -49,6 +49,7 @@ var seq2 = 0,
   delays2 = 80,
   durations2 = 500;
 
+
 $(document).ready(function() {
 
   $('body').bootstrapMaterialDesign();
@@ -147,6 +148,7 @@ $(window).resize(function() {
   }, 500);
 });
 
+
 md = {
   misc: {
     navbar_menu_visible: 0,
@@ -208,12 +210,11 @@ md = {
         },
       }
 
-      var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+      var dailySalesChart = new Chartist.Line('#a1', dataDailySalesChart, optionsDailySalesChart);
 
       var animationHeaderChart = new Chartist.Line('#websiteViewsChart', dataDailySalesChart, optionsDailySalesChart);
     }
   },
-
 
   initFormExtendedDatetimepickers: function() {
     $('.datetimepicker').datetimepicker({
@@ -307,15 +308,85 @@ md = {
     }
   },
 
+  initDashboardPageLineChart: function(id , labels, data){
+    if ($(id).length != 0 ) {
+
+      chart = {
+        labels: labels,
+        series: [
+          data
+        ]
+      };
+
+      options = {
+        lineSmooth: Chartist.Interpolation.cardinal({
+          tension: 0
+        }),
+        low: 0,
+        high: 50, 
+        chartPadding: {
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0
+        },
+      }
+
+      var Chart = new Chartist.Line(id, chart, options);
+
+      md.startAnimationForLineChart(Chart);}
+  },
+
+  initDashboardPageBarChart: function(id , labels, data){
+    if ($(id).length != 0 ) {
+      /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
+      var chart = {
+        labels: labels,
+        series: [
+          data
+        ]
+      };
+      var options = {
+        axisX: {
+          showGrid: false
+        },
+        //horizontalBars: true,
+        low: 0,
+        high: (Math.max(...data.map(Number))+1).toFixed(),
+        chartPadding: {
+          top: 0,
+          right: 5,
+          bottom: 0,
+          left: 0
+        }
+      };
+      var responsiveOptions = [
+        ['screen and (max-width: 640px)', {
+          seriesBarDistance: 5,
+          axisX: {
+            labelInterpolationFnc: function(value) {
+              return value[0];
+            }
+          }
+        }]
+      ];
+      var Chart = Chartist.Bar(id, chart, options, responsiveOptions);
+
+      //start animation for the Emails Subscription Chart
+      md.startAnimationForBarChart(Chart);
+    }
+  },
+
   initDashboardPageCharts: function() {
 
     if ($('#dailySalesChart').length != 0 || $('#completedTasksChart').length != 0 || $('#websiteViewsChart').length != 0) {
       /* ----------==========     Daily Sales Chart initialization    ==========---------- */
-
+      
       dataDailySalesChart = {
-        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-        series: [
-          [42, 17, 7, 17, 23, 18, 38]
+        labels:  JSON.stringify(document.getElementById("chart1_labels")), // ['M', 'T', 'W', 'T', 'F', 'S', 'S']
+        series: [ 
+          JSON.stringify(document.getElementById("chart1_data"))
+          // [42, 17, 7, 17, 23, 18, 38]
         ]
       };
 
@@ -446,7 +517,6 @@ md = {
     }
   }, 17),
 
-
   initRightMenu: debounce(function() {
     $sidebar_wrapper = $('.sidebar-wrapper');
 
@@ -490,7 +560,6 @@ md = {
   }, 200),
 
   startAnimationForLineChart: function(chart) {
-
     chart.on('draw', function(data) {
       if (data.type === 'line' || data.type === 'area') {
         data.element.animate({
@@ -518,6 +587,7 @@ md = {
 
     seq = 0;
   },
+
   startAnimationForBarChart: function(chart) {
 
     chart.on('draw', function(data) {
@@ -537,7 +607,6 @@ md = {
 
     seq2 = 0;
   },
-
 
   initFullCalendar: function() {
     $calendar = $('#fullCalendar');

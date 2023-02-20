@@ -19,10 +19,14 @@ The above copyright notice and this permission notice shall be included in all c
     <script>
       var socket = io.connect();
       function setWs() {
-        socket.on('newdata', function (msg) {
-          var element = document.getElementById(msg.districtId);
-          element.innerText = msg.value;
-        })
+        // socket.on("newdata", (msg)=> {
+        //   // console.log(msg);
+        //   // var element = document.getElementById("chart1_data");
+        //   // element.innerHTML = msg.chart1_data;
+          
+        //   // var element = document.getElementById(msg.ChartId);
+        //   // element.innerText = msg.value;
+        // })
       }
     </script>
     <!--ariel ws -->
@@ -45,10 +49,10 @@ The above copyright notice and this permission notice shall be included in all c
               <div class="row">
                 <%- include("../partials/graphs") %>
               </div>
-              <div class="row">
+              <!-- <div class="row">
                 <%- include("../partials/taskscard") %>
                   <%- include("../partials/employeeslist") %>
-              </div>
+              </div> -->
             </div>
           </div>
           <%- include("../partials/footer") %>

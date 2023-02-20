@@ -1,35 +1,95 @@
+var breakCards = true;
+
+var searchVisible = 0;
+var transparent = true;
+
+var transparentDemo = true;
+var fixedTop = false;
+
+var mobile_menu_visible = 0,
+  mobile_menu_initialized = false,
+  toggle_initialized = false,
+  bootstrap_nav_initialized = false;
+
+var seq = 0,
+  delays = 80,
+  durations = 500;
+var seq2 = 0,
+  delays2 = 80,
+  durations2 = 500;
+
+// socket.on("newdata", (msg)=> {
+//     console.log(msg);
+//     demo.initDashboardPageChart(JSON.stringify(msg.chart1_labels), JSON.stringify(msg.chart1_data))
+//     // var element = document.getElementById("chart1_data");
+//     // element.innerHTML = msg.chart1_data;
+    
+//     // var element = document.getElementById(msg.ChartId);
+//     // element.innerText = msg.value;
+//   })
 demo = {
-  initDocumentationCharts: function() {
-    if ($('#dailySalesChart').length != 0 && $('#websiteViewsChart').length != 0) {
-      /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
+  // initDocumentationCharts: function() {
+  //   if ($('#dailySalesChart').length != 0 && $('#websiteViewsChart').length != 0) {
+  //     /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
 
-      dataDailySalesChart = {
-        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-        series: [
-          [12, 17, 7, 17, 23, 18, 38]
-        ]
-      };
+  //     dataDailySalesChart = {
+  //       labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+  //       series: [
+  //         [12, 17, 7, 17, 23, 18, 38]
+  //       ]
+  //     };
 
-      optionsDailySalesChart = {
-        lineSmooth: Chartist.Interpolation.cardinal({
-          tension: 0
-        }),
-        low: 0,
-        high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-        chartPadding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        },
-      }
+  //     optionsDailySalesChart = {
+  //       lineSmooth: Chartist.Interpolation.cardinal({
+  //         tension: 0
+  //       }),
+  //       low: 0,
+  //       high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+  //       chartPadding: {
+  //         top: 0,
+  //         right: 0,
+  //         bottom: 0,
+  //         left: 0
+  //       },
+  //     }
 
-      var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+  //     var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
 
-      var animationHeaderChart = new Chartist.Line('#websiteViewsChart', dataDailySalesChart, optionsDailySalesChart);
-    }
-  },
+  //     var animationHeaderChart = new Chartist.Line('#websiteViewsChart', dataDailySalesChart, optionsDailySalesChart);
+  //   }
+  // },
+  initDashboardPageChart: function(labels, data){
+    
 
+      if ($('#dailySalesChart').length != 0 || $('#completedTasksChart').length != 0 || $('#websiteViewsChart').length != 0) {
+        /* ----------==========     Daily Sales Chart initialization    ==========---------- */
+  
+        dataDailySalesChart = {
+          labels: labels,
+          series: [
+            data
+          ]
+        };
+  
+        optionsDailySalesChart = {
+          lineSmooth: Chartist.Interpolation.cardinal({
+            tension: 0
+          }),
+          low: 0,
+          high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+          chartPadding: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+          },
+        }
+  
+        var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+  
+        md.startAnimationForLineChart(dailySalesChart);
+  }
+},
   initDashboardPageCharts: function() {
 
     if ($('#dailySalesChart').length != 0 || $('#completedTasksChart').length != 0 || $('#websiteViewsChart').length != 0) {
@@ -129,109 +189,157 @@ demo = {
       md.startAnimationForBarChart(websiteViewsChart);
     }
   },
+  startAnimationForBarChart: function(chart) {
 
-  initGoogleMaps: function() {
-    var myLatlng = new google.maps.LatLng(40.748817, -73.985428);
-    var mapOptions = {
-      zoom: 13,
-      center: myLatlng,
-      scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
-      styles: [{
-        "featureType": "water",
-        "stylers": [{
-          "saturation": 43
-        }, {
-          "lightness": -11
-        }, {
-          "hue": "#0088ff"
-        }]
-      }, {
-        "featureType": "road",
-        "elementType": "geometry.fill",
-        "stylers": [{
-          "hue": "#ff0000"
-        }, {
-          "saturation": -100
-        }, {
-          "lightness": 99
-        }]
-      }, {
-        "featureType": "road",
-        "elementType": "geometry.stroke",
-        "stylers": [{
-          "color": "#808080"
-        }, {
-          "lightness": 54
-        }]
-      }, {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry.fill",
-        "stylers": [{
-          "color": "#ece2d9"
-        }]
-      }, {
-        "featureType": "poi.park",
-        "elementType": "geometry.fill",
-        "stylers": [{
-          "color": "#ccdca1"
-        }]
-      }, {
-        "featureType": "road",
-        "elementType": "labels.text.fill",
-        "stylers": [{
-          "color": "#767676"
-        }]
-      }, {
-        "featureType": "road",
-        "elementType": "labels.text.stroke",
-        "stylers": [{
-          "color": "#ffffff"
-        }]
-      }, {
-        "featureType": "poi",
-        "stylers": [{
-          "visibility": "off"
-        }]
-      }, {
-        "featureType": "landscape.natural",
-        "elementType": "geometry.fill",
-        "stylers": [{
-          "visibility": "on"
-        }, {
-          "color": "#b8cb93"
-        }]
-      }, {
-        "featureType": "poi.park",
-        "stylers": [{
-          "visibility": "on"
-        }]
-      }, {
-        "featureType": "poi.sports_complex",
-        "stylers": [{
-          "visibility": "on"
-        }]
-      }, {
-        "featureType": "poi.medical",
-        "stylers": [{
-          "visibility": "on"
-        }]
-      }, {
-        "featureType": "poi.business",
-        "stylers": [{
-          "visibility": "simplified"
-        }]
-      }]
+        chart.on('draw', function(data) {
+          if (data.type === 'bar') {
+            seq2++;
+            data.element.animate({
+              opacity: {
+                begin: seq2 * delays2,
+                dur: durations2,
+                from: 0,
+                to: 1,
+                easing: 'ease'
+              }
+            });
+          }
+        });
+    
+        seq2 = 0;
+      },
+      startAnimationForLineChart: function(chart) {
 
-    };
-    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            chart.on('draw', function(data) {
+              if (data.type === 'line' || data.type === 'area') {
+                data.element.animate({
+                  d: {
+                    begin: 600,
+                    dur: 700,
+                    from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                    to: data.path.clone().stringify(),
+                    easing: Chartist.Svg.Easing.easeOutQuint
+                  }
+                });
+              } else if (data.type === 'point') {
+                seq++;
+                data.element.animate({
+                  opacity: {
+                    begin: seq * delays,
+                    dur: durations,
+                    from: 0,
+                    to: 1,
+                    easing: 'ease'
+                  }
+                });
+              }
+            });
+        
+            seq = 0;
+          },
 
-    var marker = new google.maps.Marker({
-      position: myLatlng,
-      title: "Hello World!"
-    });
+  // initGoogleMaps: function() {
+  //   var myLatlng = new google.maps.LatLng(40.748817, -73.985428);
+  //   var mapOptions = {
+  //     zoom: 13,
+  //     center: myLatlng,
+  //     scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
+  //     styles: [{
+  //       "featureType": "water",
+  //       "stylers": [{
+  //         "saturation": 43
+  //       }, {
+  //         "lightness": -11
+  //       }, {
+  //         "hue": "#0088ff"
+  //       }]
+  //     }, {
+  //       "featureType": "road",
+  //       "elementType": "geometry.fill",
+  //       "stylers": [{
+  //         "hue": "#ff0000"
+  //       }, {
+  //         "saturation": -100
+  //       }, {
+  //         "lightness": 99
+  //       }]
+  //     }, {
+  //       "featureType": "road",
+  //       "elementType": "geometry.stroke",
+  //       "stylers": [{
+  //         "color": "#808080"
+  //       }, {
+  //         "lightness": 54
+  //       }]
+  //     }, {
+  //       "featureType": "landscape.man_made",
+  //       "elementType": "geometry.fill",
+  //       "stylers": [{
+  //         "color": "#ece2d9"
+  //       }]
+  //     }, {
+  //       "featureType": "poi.park",
+  //       "elementType": "geometry.fill",
+  //       "stylers": [{
+  //         "color": "#ccdca1"
+  //       }]
+  //     }, {
+  //       "featureType": "road",
+  //       "elementType": "labels.text.fill",
+  //       "stylers": [{
+  //         "color": "#767676"
+  //       }]
+  //     }, {
+  //       "featureType": "road",
+  //       "elementType": "labels.text.stroke",
+  //       "stylers": [{
+  //         "color": "#ffffff"
+  //       }]
+  //     }, {
+  //       "featureType": "poi",
+  //       "stylers": [{
+  //         "visibility": "off"
+  //       }]
+  //     }, {
+  //       "featureType": "landscape.natural",
+  //       "elementType": "geometry.fill",
+  //       "stylers": [{
+  //         "visibility": "on"
+  //       }, {
+  //         "color": "#b8cb93"
+  //       }]
+  //     }, {
+  //       "featureType": "poi.park",
+  //       "stylers": [{
+  //         "visibility": "on"
+  //       }]
+  //     }, {
+  //       "featureType": "poi.sports_complex",
+  //       "stylers": [{
+  //         "visibility": "on"
+  //       }]
+  //     }, {
+  //       "featureType": "poi.medical",
+  //       "stylers": [{
+  //         "visibility": "on"
+  //       }]
+  //     }, {
+  //       "featureType": "poi.business",
+  //       "stylers": [{
+  //         "visibility": "simplified"
+  //       }]
+  //     }]
 
-    // To add the marker to the map, call setMap();
-    marker.setMap(map);
-  }
+  //   };
+  //   var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+
+  //   var marker = new google.maps.Marker({
+  //     position: myLatlng,
+  //     title: "Hello World!"
+  //   });
+
+  //   // To add the marker to the map, call setMap();
+  //   marker.setMap(map);
+  // }
 
 }
