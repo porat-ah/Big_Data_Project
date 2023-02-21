@@ -1,104 +1,146 @@
+async function setup(client) {
+    client.setAsync( 'avg_time', '0')
+    client.setAsync('open_orders', '0');
+    client.setAsync('num_of_orders_today', '0');
+    client.setAsync('num_of_orders', '0');
+    client.setAsync('num_of_finished_orders', '0');
+    client.setAsync('num_of_open_branches', '0');
+    reset_location(client);
+    reset_toppings(client);
+    reset_order_to_time(client);
+}
 
-function branch_message(message, client) {
+async function branch_setup(message, client) {
+    client.saddAsync('branches_id',`${message['branch_id']}`);
+    client.setAsync(`branch_id_${message['branch_id']}_name`, message['branch_name']);
+    client.setAsync(`avg_time_branch_${message['branch_id']}`, '0');
+    client.setAsync(`num_of_finished_orders_branch_${message['branch_id']}`, '0');
+}
+
+async function branch_message(message, client) {
     if (message['status'] == 'open') {
-        client.incr('num_of_open_branchs')
+        client.incrAsync('num_of_open_branches')
     }
     else{
-        client.decr('num_of_open_branchs')
+        client.decrAsync('num_of_open_branches')
     }
 }
 
-
-function order_message(message, client) {
+async function order_message(message, client) {
     if (message['order_status'] == 'finished') {
-        client.decr('open_orders');
+        client.decrAsync('open_orders');
         avg_time(message, client);
+        branch_avg_time(message, client);
         order_dist_by_location(message, client);
         order_to_time(message, client);
+        client.delAsync(`order_${message['id']}_time`)
 
     }
     else{
-        client.incr('open_orders');
-        client.incr('num_of_order_today');
-        client.incr('num_of_orders');
-        client.set(`order_${message['id']}_time`, message['time']);
-        toppings_5(message, client);
+        client.incrAsync( 'open_orders');
+        client.incrAsync('num_of_orders_today');
+        client.incrAsync('num_of_orders');
+        client.setAsync(`order_${message['id']}_time`, message['time']);
+        number_of_toppings_ordered(message, client);
     }
 }
 
-function avg_time(message, client){
+async function avg_time(message, client){
     var new_time_f = new Date(message['time']);
-    var new_time_s = new Date(client.get(`order_${message['id']}_time`));
+    var new_time_s = new Date(await client.getAsync(`order_${message['id']}_time`));
     var diff = diff_minutes(new_time_f, new_time_s);
-    var old_avg = client.get('avg_time');
-    var num = client.get('num_of_finished_orders');
+    var old_avg = Number(await client.getAsync('avg_time'));
+    var num = Number(await client.getAsync('num_of_finished_orders'));
     old_avg *= num;
     old_avg += diff;
     num++;
     old_avg /= num;
-    client.set('avg_time', old_avg);
-    client.set('num_of_finished_orders', num);
+    client.setAsync('avg_time', `${old_avg}`);
+    client.setAsync('num_of_finished_orders', `${num}`); 
+}
 
-
-    var old_avg = client.get(`avg_time_branch_${message['branch_id']}`);
-    var num = client.get(`num_of_finished_orders_branch_${message['branch_id']}`);
+async function branch_avg_time(message, client) {
+    var new_time_f = new Date(message['time']);
+    var new_time_s = new Date(await client.getAsync(`order_${message['id']}_time`));
+    var diff = diff_minutes(new_time_f, new_time_s);
+    var old_avg = Number(await client.getAsync(`avg_time_branch_${message['branch_id']}`));
+    var num = Number(await client.getAsync(`num_of_finished_orders_branch_${message['branch_id']}`));
     old_avg *= num;
     old_avg += diff;
     num++;
     old_avg /= num;
-    client.set(`avg_time_branch_${message['branch_id']}`, old_avg);
-    client.set(`num_of_finished_orders_branch_${message['branch_id']}`, num);
-    var branch_id = message['branch_id'];
-    var branch_name = message['branch_name'];
-    var branch_avg_time = old_avg;
-    for (let i = 1; i < 6; i++) {
-        var avg_time_of_branch = client.get(`branch_num_${i}_time`);
-        if (branch_avg_time < avg_time_of_branch) {
-            var temp_name = client.get(`branch_num_${i}_name`);
-            client.set(`branch_num_${i}_name`, branch_name);
-            branch_name = temp_name;
-            var temp_id = client.get(`branch_num_${i}_id`);
-            client.set(`branch_num_${i}_id`, branch_id);
-            branch_id = temp_id;
-            client.set(`branch_num_${i}_time`, branch_avg_time);
-            branch_avg_time = avg_time_of_branch;
-        } 
+    client.setAsync(`avg_time_branch_${message['branch_id']}`, `${old_avg}`);
+    client.setAsync(`num_of_finished_orders_branch_${message['branch_id']}`, `${num}`);
+    
+    
+}
+
+async function number_of_toppings_ordered(message, client) {
+    for (let i = 0; i < message['number_of_toppings']; i++) {
+        client.incrAsync(`${message['toppings'][i]}_ordered`);
     }
 }
+
+async function order_dist_by_location(message, client) {
+    client.incrAsync( `ordered_finishied_in_${message['location']}`)
+}
+
+async function order_to_time(message, client)  {
+    var _time = new Date(message['time']);
+    client.incrAsync( `num_of_orders_in_time_${_time.getHours()}:0`)
+}
+
+async function day_reset(client) {
+    client.setAsync('num_of_orders_today', '0');
+    reset_location(client);
+    reset_toppings(client);
+    reset_branch_data(client);
+    reset_order_to_time(client);
+}
+
+async function reset_toppings(client){
+    var toppings = ['olive', 'mushrooms', 'corn', 'onion', 'tuna', 'jalapeno'];
+    for (let i = 0; i < toppings.length; i++) {
+        client.setAsync(`${toppings[i]}_ordered`, '0');
+    }
+}
+
+async function reset_location(client){
+    var location = ['North', 'Haifa', 'Dan', 'Central', 'South']
+    for (let i = 0; i < location.length; i++) {
+        client.setAsync(`ordered_finishied_in_${location[i]}`, '0');  
+    }
+}
+
+async function reset_branch_data(client){
+    const branches_id = await client.smembersAsync('branches_id');
+    branches_id = branches_id.map(Number);
+    branches_id.forEach(id => {
+        client.setAsync(`avg_time_branch_${id}`, '0');
+        client.setAsync(`num_of_finished_orders_branch_${id}`, '0');
+    });
+}
+
+async function reset_order_to_time(client){
+    for (let i = 0; i < 24; i++) {
+        client.setAsync(`num_of_orders_in_time_${i}:0`, '0');
+    }
+}
+
+// ----- time functions -----
 
 // https://www.w3resource.com/javascript-exercises/javascript-date-exercise-44.php
 function diff_minutes(dt2, dt1) 
- {
-
+{
   var diff =(dt2.getTime() - dt1.getTime()) / 1000;
   diff /= 60;
   return Math.abs(Math.round(diff));
-  
- }
+}
 
-
- function toppings_5(message, client) {
-    var toppings = ['olive', 'mushrooms', 'corn', 'onion', 'tuna', 'jalapeno'];
-    var number_of_toppings_ordered = [[0,0],[0,1],[0,2],[0,3],[0,4],[0,5]];
-    for (let i = 0; i < message['number_of_toppings']; i++) {
-        client.incr(`${message['toppings'][i]}_ordered`);
-    }
-    for (let i = 0; i < 6; i++) {
-        number_of_toppings_ordered[i][0] = client.get(`${toppings[i]}_ordered`) 
-    }
-    number_of_toppings_ordered.sort((a,b) => a[0] > b[0]);
-    for (let i = 1; i < 6; i++) {
-        client.set(`topping_num_${i}`, toppings[number_of_toppings_ordered[i-1][1]]) 
-    }
- }
-
- function order_dist_by_location(message, client) {
-    client.incr(`ordered_finishied_in_${message['location']}`)
- }
-
- function order_to_time(message, client)  {
-    var _time = new Date(message['time']);
-    client.incr(`num_of_orders_in_time_${_time.getHours()}:${_time.getMinutes()}`)
- }
-
- module.exports ={order_message: order_message,branch_message: branch_message } 
+module.exports ={
+    order_message: order_message,
+    branch_message: branch_message,
+    setup: setup,
+    branch_setup: branch_setup,
+    day_reset: day_reset
+} 

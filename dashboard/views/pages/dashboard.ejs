@@ -18,21 +18,11 @@ The above copyright notice and this permission notice shall be included in all c
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io.connect();
-      function setWs() {
-        // socket.on("newdata", (msg)=> {
-        //   // console.log(msg);
-        //   // var element = document.getElementById("chart1_data");
-        //   // element.innerHTML = msg.chart1_data;
-          
-        //   // var element = document.getElementById(msg.ChartId);
-        //   // element.innerText = msg.value;
-        // })
-      }
     </script>
     <!--ariel ws -->
 </head>
 
-<body class="" onload="setWs()">
+<body class="" >
   <div class="wrapper ">
     <%- include("../partials/sidebar") %>
       <div class="main-panel">
@@ -47,12 +37,12 @@ The above copyright notice and this permission notice shall be included in all c
                       <!--end-->
               </div>
               <div class="row">
-                <%- include("../partials/graphs") %>
+                <%- include("../partials/bar_chart") %>
               </div>
-              <!-- <div class="row">
-                <%- include("../partials/taskscard") %>
-                  <%- include("../partials/employeeslist") %>
-              </div> -->
+              <div class="row">
+                <%- include("../partials/line_chart") %>
+                <%- include("../partials/pie_chart") %>
+              </div>
             </div>
           </div>
           <%- include("../partials/footer") %>

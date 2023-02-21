@@ -185,36 +185,6 @@ md = {
     });
   },
 
-  initDocumentationCharts: function() {
-    if ($('#dailySalesChart').length != 0 && $('#websiteViewsChart').length != 0) {
-      /* ----------==========     Daily Sales Chart initialization For Documentation    ==========---------- */
-
-      dataDailySalesChart = {
-        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-        series: [
-          [12, 17, 7, 17, 23, 18, 38]
-        ]
-      };
-
-      optionsDailySalesChart = {
-        lineSmooth: Chartist.Interpolation.cardinal({
-          tension: 0
-        }),
-        low: 0,
-        high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-        chartPadding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        },
-      }
-
-      var dailySalesChart = new Chartist.Line('#a1', dataDailySalesChart, optionsDailySalesChart);
-
-      var animationHeaderChart = new Chartist.Line('#websiteViewsChart', dataDailySalesChart, optionsDailySalesChart);
-    }
-  },
 
   initFormExtendedDatetimepickers: function() {
     $('.datetimepicker').datetimepicker({
@@ -263,7 +233,6 @@ md = {
       }
     });
   },
-
 
   initSliders: function() {
     // Sliders for demo purpose
@@ -323,7 +292,7 @@ md = {
           tension: 0
         }),
         low: 0,
-        high: 50, 
+        high: (Math.max(...data.map(Number))+10).toFixed(), 
         chartPadding: {
           top: 0,
           right: 0,
@@ -339,7 +308,6 @@ md = {
 
   initDashboardPageBarChart: function(id , labels, data){
     if ($(id).length != 0 ) {
-      /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
       var chart = {
         labels: labels,
         series: [
@@ -348,21 +316,29 @@ md = {
       };
       var options = {
         axisX: {
-          showGrid: false
+          showGrid: false,
+          labelOffset: {
+            x: 40,
+          },
         },
-        //horizontalBars: true,
+        // axisY: {
+        //   // The offset of the chart drawing area to the border of the container
+        //   offset: 125,
+        // },
+        // horizontalBars: ,
+        stackBars: true,
         low: 0,
-        high: (Math.max(...data.map(Number))+1).toFixed(),
+        high: (Math.max(...data.map(Number))*1.1).toFixed(),
         chartPadding: {
           top: 0,
-          right: 5,
+          right: 0,
           bottom: 0,
           left: 0
         }
       };
       var responsiveOptions = [
-        ['screen and (max-width: 640px)', {
-          seriesBarDistance: 5,
+        ['screen and (max-width: 600px)', { 
+          
           axisX: {
             labelInterpolationFnc: function(value) {
               return value[0];
@@ -377,104 +353,22 @@ md = {
     }
   },
 
-  initDashboardPageCharts: function() {
-
-    if ($('#dailySalesChart').length != 0 || $('#completedTasksChart').length != 0 || $('#websiteViewsChart').length != 0) {
-      /* ----------==========     Daily Sales Chart initialization    ==========---------- */
-      
-      dataDailySalesChart = {
-        labels:  JSON.stringify(document.getElementById("chart1_labels")), // ['M', 'T', 'W', 'T', 'F', 'S', 'S']
-        series: [ 
-          JSON.stringify(document.getElementById("chart1_data"))
-          // [42, 17, 7, 17, 23, 18, 38]
-        ]
+  initDashboardPagePieChart: function(id , labels, data){
+    if ($(id).length != 0 ) {
+      chart = {
+        series: data.map(Number),
+        labels: labels
       };
 
-      optionsDailySalesChart = {
-        lineSmooth: Chartist.Interpolation.cardinal({
-          tension: 0
-        }),
-        low: 0,
-        high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-        chartPadding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        },
+      options = { 
+        donut: true,
+        donutWidth: '40%',
+        startAngle: 270
       }
 
-      var dailySalesChart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
+      var Chart = new Chartist.Pie(id, chart, options);
 
-      md.startAnimationForLineChart(dailySalesChart);
-
-
-
-      /* ----------==========     Completed Tasks Chart initialization    ==========---------- */
-
-      dataCompletedTasksChart = {
-        labels: ['12p', '3p', '6p', '9p', '12p', '3a', '6a', '9a'],
-        series: [
-          [230, 750, 450, 300, 280, 240, 200, 190]
-        ]
-      };
-
-      optionsCompletedTasksChart = {
-        lineSmooth: Chartist.Interpolation.cardinal({
-          tension: 0
-        }),
-        low: 0,
-        high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-        chartPadding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0
-        }
-      }
-
-      var completedTasksChart = new Chartist.Line('#completedTasksChart', dataCompletedTasksChart, optionsCompletedTasksChart);
-
-      // start animation for the Completed Tasks Chart - Line Chart
-      md.startAnimationForLineChart(completedTasksChart);
-
-
-      /* ----------==========     Emails Subscription Chart initialization    ==========---------- */
-
-      var dataWebsiteViewsChart = {
-        labels: ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'],
-        series: [
-          [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
-
-        ]
-      };
-      var optionsWebsiteViewsChart = {
-        axisX: {
-          showGrid: false
-        },
-        low: 0,
-        high: 1000,
-        chartPadding: {
-          top: 0,
-          right: 5,
-          bottom: 0,
-          left: 0
-        }
-      };
-      var responsiveOptions = [
-        ['screen and (max-width: 640px)', {
-          seriesBarDistance: 5,
-          axisX: {
-            labelInterpolationFnc: function(value) {
-              return value[0];
-            }
-          }
-        }]
-      ];
-      var websiteViewsChart = Chartist.Bar('#websiteViewsChart', dataWebsiteViewsChart, optionsWebsiteViewsChart, responsiveOptions);
-
-      //start animation for the Emails Subscription Chart
-      md.startAnimationForBarChart(websiteViewsChart);
+      md.startAnimationForPieChart(Chart);
     }
   },
 
@@ -608,179 +502,46 @@ md = {
     seq2 = 0;
   },
 
-  initFullCalendar: function() {
-    $calendar = $('#fullCalendar');
-
-    today = new Date();
-    y = today.getFullYear();
-    m = today.getMonth();
-    d = today.getDate();
-
-    $calendar.fullCalendar({
-      viewRender: function(view, element) {
-        // We make sure that we activate the perfect scrollbar when the view isn't on Month
-        if (view.name != 'month') {
-          $(element).find('.fc-scroller').perfectScrollbar();
+  startAnimationForPieChart: function(chart){
+    chart.on('draw', function(data) {
+      if(data.type === 'slice') {
+        // Get the total path length in order to use for dash array animation
+        var pathLength = data.element._node.getTotalLength();
+    
+        // Set a dasharray that matches the path length as prerequisite to animate dashoffset
+        data.element.attr({
+          'stroke-dasharray': pathLength + 'px ' + pathLength + 'px'
+        });
+    
+        // Create animation definition while also assigning an ID to the animation for later sync usage
+        var animationDefinition = {
+          'stroke-dashoffset': {
+            id: 'anim' + data.index,
+            dur: 1000,
+            from: -pathLength + 'px',
+            to:  '0px',
+            easing: Chartist.Svg.Easing.easeOutQuint,
+            // We need to use `fill: 'freeze'` otherwise our animation will fall back to initial (not visible)
+            fill: 'freeze'
+          }
+        };
+    
+        // If this was not the first slice, we need to time the animation so that it uses the end sync event of the previous animation
+        if(data.index !== 0) {
+          animationDefinition['stroke-dashoffset'].begin = 'anim' + (data.index - 1) + '.end';
         }
-      },
-      header: {
-        left: 'title',
-        center: 'month,agendaWeek,agendaDay',
-        right: 'prev,next,today'
-      },
-      defaultDate: today,
-      selectable: true,
-      selectHelper: true,
-      views: {
-        month: { // name of view
-          titleFormat: 'MMMM YYYY'
-          // other view-specific options here
-        },
-        week: {
-          titleFormat: " MMMM D YYYY"
-        },
-        day: {
-          titleFormat: 'D MMM, YYYY'
-        }
-      },
-
-      select: function(start, end) {
-
-        // on select we show the Sweet Alert modal with an input
-        swal({
-            title: 'Create an Event',
-            html: '<div class="form-group">' +
-              '<input class="form-control" placeholder="Event Title" id="input-field">' +
-              '</div>',
-            showCancelButton: true,
-            confirmButtonClass: 'btn btn-success',
-            cancelButtonClass: 'btn btn-danger',
-            buttonsStyling: false
-          }).then(function(result) {
-
-            var eventData;
-            event_title = $('#input-field').val();
-
-            if (event_title) {
-              eventData = {
-                title: event_title,
-                start: start,
-                end: end
-              };
-              $calendar.fullCalendar('renderEvent', eventData, true); // stick? = true
-            }
-
-            $calendar.fullCalendar('unselect');
-
-          })
-          .catch(swal.noop);
-      },
-      editable: true,
-      eventLimit: true, // allow "more" link when too many events
-
-
-      // color classes: [ event-blue | event-azure | event-green | event-orange | event-red ]
-      events: [{
-          title: 'All Day Event',
-          start: new Date(y, m, 1),
-          className: 'event-default'
-        },
-        {
-          id: 999,
-          title: 'Repeating Event',
-          start: new Date(y, m, d - 4, 6, 0),
-          allDay: false,
-          className: 'event-rose'
-        },
-        {
-          id: 999,
-          title: 'Repeating Event',
-          start: new Date(y, m, d + 3, 6, 0),
-          allDay: false,
-          className: 'event-rose'
-        },
-        {
-          title: 'Meeting',
-          start: new Date(y, m, d - 1, 10, 30),
-          allDay: false,
-          className: 'event-green'
-        },
-        {
-          title: 'Lunch',
-          start: new Date(y, m, d + 7, 12, 0),
-          end: new Date(y, m, d + 7, 14, 0),
-          allDay: false,
-          className: 'event-red'
-        },
-        {
-          title: 'Md-pro Launch',
-          start: new Date(y, m, d - 2, 12, 0),
-          allDay: true,
-          className: 'event-azure'
-        },
-        {
-          title: 'Birthday Party',
-          start: new Date(y, m, d + 1, 19, 0),
-          end: new Date(y, m, d + 1, 22, 30),
-          allDay: false,
-          className: 'event-azure'
-        },
-        {
-          title: 'Click for Creative Tim',
-          start: new Date(y, m, 21),
-          end: new Date(y, m, 22),
-          url: 'http://www.creative-tim.com/',
-          className: 'event-orange'
-        },
-        {
-          title: 'Click for Google',
-          start: new Date(y, m, 21),
-          end: new Date(y, m, 22),
-          url: 'http://www.creative-tim.com/',
-          className: 'event-orange'
-        }
-      ]
+    
+        // We need to set an initial value before the animation starts as we are not in guided mode which would do that for us
+        data.element.attr({
+          'stroke-dashoffset': -pathLength + 'px'
+        });
+    
+        // We can't use guided mode as the animations need to rely on setting begin manually
+        // See http://gionkunz.github.io/chartist-js/api-documentation.html#chartistsvg-function-animate
+        data.element.animate(animationDefinition, false);
+      }
     });
   },
-
-  initVectorMap: function() {
-    var mapData = {
-      "AU": 760,
-      "BR": 550,
-      "CA": 120,
-      "DE": 1300,
-      "FR": 540,
-      "GB": 690,
-      "GE": 200,
-      "IN": 200,
-      "RO": 600,
-      "RU": 300,
-      "US": 2920,
-    };
-
-    $('#worldMap').vectorMap({
-      map: 'world_mill_en',
-      backgroundColor: "transparent",
-      zoomOnScroll: false,
-      regionStyle: {
-        initial: {
-          fill: '#e4e4e4',
-          "fill-opacity": 0.9,
-          stroke: 'none',
-          "stroke-width": 0,
-          "stroke-opacity": 0
-        }
-      },
-
-      series: {
-        regions: [{
-          values: mapData,
-          scale: ["#AAAAAA", "#444444"],
-          normalizeFunction: 'polynomial'
-        }]
-      },
-    });
-  }
 }
 
 // Returns a function, that, as long as it continues to be invoked, will not

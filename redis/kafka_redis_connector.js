@@ -1,9 +1,8 @@
 const Kafka = require("node-rdkafka");
-const redis = require('redis');
+const redis = require('redis-promisify');
 const schedule = require('node-schedule');
 require('dotenv').config({ path: '../.env' })
-var utils = require('./utils')
-
+var utils = require('./utils');
 
 const kafkaConf = {
   "group.id": `${process.env.KAFKA_USER_NAME}-consumer`,
@@ -44,7 +43,7 @@ consumer.on('data', function(m) {
       utils.branch_message(m, client);
   }
   else if (m["message_type"] == "branch created") {
-	  client.set(`branch_id_${m['branch_id']}_name`, m['branch_name']);
+	  utils.branch_setup(m, client);
   }
   else{
     utils.order_message(m, client);
@@ -56,32 +55,26 @@ consumer.on("disconnected", function(arg) {
   process.exit();
 });
 
-
 consumer.on('event.error', function(err) {
   console.error(err);
   process.exit(1);
 });
 
-
 consumer.on('event.log', function(log) {
   // console.log(log);
 });
-
-
-
 
 client.on("error", error => {
   console.error("ERROR***",error);
 });
 
 
-
 schedule.scheduleJob({hour: 0, minute: 0}, function(){
-	client.set('num_of_order_today', 0);
+  utils.day_reset(client);
 });
 
 consumer.connect();
 
-client.connect();
+utils.setup(client);
 
 

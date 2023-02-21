@@ -1,5 +1,3 @@
-
-
 function create_cards(info) {
    console.log(info)
      return [
@@ -10,7 +8,7 @@ function create_cards(info) {
      ]
 }
 
-function create_bar_chart(info) {
+function create_chart(info) {
   label = []
   data = []
   for (let i = 0; i < info.length; i++) {
@@ -19,71 +17,9 @@ function create_bar_chart(info) {
    }
    return {label: label, data: data};
 }
-function create_line_chart(info, id){
-   return line_md = {
-      initLineChart: function() {
-          data = {
-            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-            series: [
-              [42, 17, 7, 17, 23, 18, 38]
-            ]
-          };
-    
-          options = {
-            lineSmooth: Chartist.Interpolation.cardinal({
-              tension: 0
-            }),
-            low: 0,
-            high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-            chartPadding: {
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0
-            },
-          }
-    
-          var Chart = new Chartist.Line('#dailySalesChart', dataDailySalesChart, optionsDailySalesChart);
-    
-          md.startAnimationForLineChart(Chart);
-      },
-    
-    
-      startAnimationForLineChart: function(chart) {
-    
-        chart.on('draw', function(data) {
-          if (data.type === 'line' || data.type === 'area') {
-            data.element.animate({
-              d: {
-                begin: 600,
-                dur: 700,
-                from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
-                to: data.path.clone().stringify(),
-                easing: Chartist.Svg.Easing.easeOutQuint
-              }
-            });
-          } else if (data.type === 'point') {
-            seq++;
-            data.element.animate({
-              opacity: {
-                begin: seq * delays,
-                dur: durations,
-                from: 0,
-                to: 1,
-                easing: 'ease'
-              }
-            });
-          }
-        });
-    
-        seq = 0;
-      },
-    }
+
+
+module.exports = {
+  create_cards:create_cards,
+  create_chart:create_chart
 }
-
-
-
-
-
-
-module.exports = {create_cards: create_cards, create_bar_chart:create_bar_chart}
