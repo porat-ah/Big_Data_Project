@@ -292,7 +292,7 @@ md = {
           tension: 0
         }),
         low: 0,
-        high: (Math.max(...data.map(Number))+10).toFixed(), 
+        high: (Math.max(...data.map(Number))*1.1).toFixed(), 
         chartPadding: {
           top: 0,
           right: 0,
@@ -318,14 +318,9 @@ md = {
         axisX: {
           showGrid: false,
           labelOffset: {
-            x: 40,
+            x: 42.5,
           },
         },
-        // axisY: {
-        //   // The offset of the chart drawing area to the border of the container
-        //   offset: 125,
-        // },
-        // horizontalBars: ,
         stackBars: true,
         low: 0,
         high: (Math.max(...data.map(Number))*1.1).toFixed(),
@@ -361,11 +356,17 @@ md = {
       };
 
       options = { 
-        donut: true,
-        donutWidth: '40%',
-        startAngle: 270
-      }
-
+        chartPadding: 5,
+        labelPosition: 'inside',
+        donut:true,
+        donutWidth: 40,
+        startAngle: 270,
+      };
+      var responsiveOptions = [
+        ['screen and (max-width: 600px)', { 
+          chartPadding: 10,
+        }]
+      ];
       var Chart = new Chartist.Pie(id, chart, options);
 
       md.startAnimationForPieChart(Chart);

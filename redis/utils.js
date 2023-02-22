@@ -87,7 +87,7 @@ async function order_dist_by_location(message, client) {
 
 async function order_to_time(message, client)  {
     var _time = new Date(message['time']);
-    client.incrAsync( `num_of_orders_in_time_${_time.getHours()}:0`)
+    client.incrAsync( `num_of_orders_in_time_${_time.getHours()}`)
 }
 
 async function day_reset(client) {
@@ -123,7 +123,7 @@ async function reset_branch_data(client){
 
 async function reset_order_to_time(client){
     for (let i = 0; i < 24; i++) {
-        client.setAsync(`num_of_orders_in_time_${i}:0`, '0');
+        client.setAsync(`num_of_orders_in_time_${i}`, '0');
     }
 }
 

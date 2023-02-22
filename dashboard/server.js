@@ -11,8 +11,15 @@ app.use(express.static('public'))
 app.set('view engine', 'ejs')
 
 app.get('/', async (req, res) => {
+  d = new Date()
+  var hr = d.getHours();
+  var min = d.getMinutes();
+  if (min < 10) {
+      min = "0" + min;
+  }
   var data = {
     cards: dashboard.create_cards(await redis.cards_info()),
+    time: `${hr}:${min}`
   };
   res.render("pages/dashboard", data)
 })

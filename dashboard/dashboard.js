@@ -1,10 +1,10 @@
 function create_cards(info) {
    console.log(info)
      return [
-        { title: "open orders", value: info[0], unit: "orders",  icon: "local_pizza" },
-        { title: "number of orders today", value: info[1], unit: "orders",  icon: "assignment_turned_in" },
-        { title: "number of open branchs", value: info[2], unit: "branch",  icon: "info" },
-        { title: "order average time", value: info[3], unit: "minutes",  icon: "local_shipping" }
+        { title: "open orders", value: info[0], unit: "orders",  icon: "local_pizza" , color: "card-header-danger" },
+        { title: "number of orders today", value: info[1], unit: "orders",  icon: "assignment_turned_in", color: "card-header-success" },
+        { title: "number of open branchs", value: info[2], unit: "branch",  icon: "info", color: "card-header-info"},
+        { title: "order average time", value: info[3], unit: "minutes",  icon: "local_shipping", color: "card-header-primary" }
      ]
 }
 

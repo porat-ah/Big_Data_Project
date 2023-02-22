@@ -63,13 +63,14 @@ async function orders_location(){
     var num_of_oreders_in_location = [];
     var sum = 0;
     var num;
-    for (let i = 0; i < location.length; i++) {
+    n = location.length
+    for (let i = 0; i < n; i++) { 
         num = Number(await client.getAsync(`ordered_finishied_in_${location[i]}`))
         sum += num
         num_of_oreders_in_location.push([location[i],num] )
     }
     
-    for (let i = 0; i < location.length; i++) {
+    for (let i = 0; i < n; i++) { 
         num_of_oreders_in_location[i][1] = (num_of_oreders_in_location[i][1]*100)/sum;
     }
     return num_of_oreders_in_location;
