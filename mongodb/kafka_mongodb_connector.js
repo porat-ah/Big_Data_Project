@@ -4,7 +4,7 @@ const MongoClient = require("mongodb").MongoClient;
 
 
 // Connection URL
-const url = 'mongodb+srv://pizza:pizza@middlepizza.25kej0v.mongodb.net/?retryWrites=true&w=majority';
+const url = `mongodb+srv://${process.env.MONGO_USER_NAME}:${process.env.MONGO_PASSWORD}@middlepizza.25kej0v.mongodb.net/?retryWrites=true&w=majority`;
 
 
 const kafkaConf = {
@@ -39,19 +39,15 @@ consumer.on("ready", function(arg) {
   consumer.consume();
 });
 
-consumer.on('data', function(m) {
+consumer.on('data', async function(m) {
   m = JSON.parse(m.value.toString());
   console.log(m);
-  
-  if (m["message_type"] == "branch status") {
-      console.log("branch status");
-	  
-  }
-  else if (m["message_type"] == "branch created") {
-	    console.log("branch created");
-  }
-  else{
-    console.log("order");
+  await client.connect();
+  console.log('Connected successfully to server');
+  const db = client.db(dbName);
+  const collection = db.collection('Orders');
+
+  if (m["message_type"] == "order") {
   }
 });
 

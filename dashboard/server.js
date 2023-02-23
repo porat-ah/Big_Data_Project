@@ -38,10 +38,4 @@ io.on("connection", async (socket) => {
   io.emit("orders_location", dashboard.create_chart(await redis.orders_location()));
 });
 
-io.on("update", async (msg)=>{
-  console.log('update')
-  io.emit("top_5_branches", dashboard.create_chart(await redis.top_5_branches()));
-  io.emit("top_5_toppings", dashboard.create_chart(await redis.top_5_toppings()));
-})
-
 
