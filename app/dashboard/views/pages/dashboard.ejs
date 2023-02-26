@@ -1,0 +1,54 @@
+<!--
+=========================================================
+Material Dashboard - v2.1.2
+=========================================================
+
+Product Page: https://www.creative-tim.com/product/material-dashboard
+Copyright 2020 Creative Tim (https://www.creative-tim.com)
+Coded by Creative Tim
+
+=========================================================
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+<!DOCTYPE html>
+<html>
+
+<head>
+  <%- include("../partials/headers") %>
+    <!--ariel ws-->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect();
+    </script>
+    <!--ariel ws -->
+</head>
+
+<body class="bg-dark"  >
+  <div class="wrapper ">
+    <%- include("../partials/sidebar") %>
+      <div class="main-panel">
+        <%- include("../partials/navbar", time) %>
+          <div class="content">
+            <div class="container-fluid">
+              <div class="row">
+                <!--start-->
+                <% cards.forEach(function(card) { %>
+                  <%- include("../partials/card",card) %>
+                    <% }); %>
+                      <!--end-->
+              </div>
+              <div class="row">
+                <%- include("../partials/bar_chart") %>
+              </div>
+              <div class="row">
+                <%- include("../partials/line_chart") %>
+                <%- include("../partials/pie_chart") %>
+              </div>
+            </div>
+          </div>
+          <%- include("../partials/footer") %>
+      </div>
+  </div>
+  <%- include("../partials/dashcode") %>
+</body>
+
+</html>
