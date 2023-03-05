@@ -6,7 +6,7 @@ const MongoClient = require("mongodb").MongoClient;
 // Connection URL
 const url = `mongodb+srv://${process.env.MONGO_USER_NAME}:${process.env.MONGO_PASSWORD}@middlepizza.25kej0v.mongodb.net/?retryWrites=true&w=majority`;
 
-
+console.log(url)
 const kafkaConf = {
   "group.id": `${process.env.KAFKA_USER_NAME}-consumer`,
   "metadata.broker.list": [`${process.env.KAFKA_SERVER_1}`,`${process.env.KAFKA_SERVER_2}`,`${process.env.KAFKA_SERVER_3}`],
@@ -28,31 +28,50 @@ const consumer = new Kafka.KafkaConsumer(kafkaConf, {
 
 const client = new MongoClient(url);
 
+
+
+
 consumer.on("error", function(err) {
   console.error(err);
 });
 
 
-consumer.on("ready", function(arg) {
+consumer.on("ready", async function(arg) {
   console.log(`Consumer ${arg.name} ready`);
   consumer.subscribe(topics);
   consumer.consume();
+  try{
+		await client.connect();
+     }catch(err){
+	 console.log(err);
+	 }
 });
 
 consumer.on('data', async function(m) {
   m = JSON.parse(m.value.toString());
-  console.log(m);
-  await client.connect();
-  console.log('Connected successfully to server');
-  const db = client.db(dbName);
-  const collection = db.collection('Orders');
-
+  //console.log(m);
   if (m["message_type"] == "order") {
+	  console.log("order");
+	  try{
+		const database = client.db("Pizza");
+        const orders = database.collection("Orders");
+		m["timestamp"] = Date.parse(m["time"])
+		const result = await orders.insertOne(m);
+		console.log(`collected order. id branch ${m["id"]}, id order ${m["branch_id"]}`);
+	  }catch(err){
+	  console.log(err);
+	  }
   }
+  
 });
 
-consumer.on("disconnected", function(arg) {
+consumer.on("disconnected", async function(arg) {
   console.log(`Consumer ${arg.name} disconnected`);
+  try{
+	  await client.close();
+  }catch(err){
+	console.log(err);
+  }
   process.exit();
 });
 
@@ -65,10 +84,28 @@ consumer.on('event.log', function(log) {
   // console.log(log);
 });
 
-client.on("error", error => {
-  console.error("ERROR***",error);
-});
+/*const u = `mongodb+srv://pi:pi@middlepizza.25kej0v.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(u);
 
+async function run() {
+  try {
+	await client.connect();
+	console.log('server');
+    const database = client.db("Pizza");
+    const haiku = database.collection("Orders");
+    // create a document to insert
+    const doc = {
+      title: "Record of a Shriveled Datum",
+      content: "No bytes, no problem. Just insert a document, in MongoDB",
+    }
+    const result = await haiku.insertOne(doc);
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
+  } finally {
+    await client.close();
+  }
+}
+run().catch(console.dir);
+*/
 console.log('connecting..');
 consumer.connect();
 
