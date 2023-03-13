@@ -7,9 +7,15 @@ const server = express()
 const io = socketIO(server);
 module.exports = io
 
-app.set('views', './dashboard/views');
+app.set('views', './views');
 app.set('view engine', 'ejs');
-app.use(express.static('./dashboard/public'))
+app.use(express.static('./public'))
+
 
 const dashboard = require('./dashboard/controller')
 app.use(dashboard)
+
+
+
+const association = require('./association/controller')
+app.use(association)

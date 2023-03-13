@@ -358,7 +358,7 @@ md = {
       options = { 
         chartPadding: 5,
         labelPosition: 'inside',
-        donut:true,
+        donut:false,
         donutWidth: 40,
         startAngle: 270,
       };

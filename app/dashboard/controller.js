@@ -14,7 +14,10 @@ router.get('/', async (req, res) => {
   }
   var data = {
     cards: dashboard.create_cards(await redis.cards_info()),
-    time: `${hr}:${min}`
+    time: `${hr}:${min}`,
+    association_active: "",
+    dashboard_active: "active",
+    page_title: "Dashboard"
   };
   res.render("pages/dashboard", data)
 })
@@ -26,6 +29,7 @@ io.on("connection", async (socket) => {
   io.emit("orders_time", dashboard.create_chart(await redis.orders_time()));
   io.emit("orders_location", dashboard.create_chart(await redis.orders_location()));
 });
+
 
 module.exports = router
 
