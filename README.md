@@ -11,26 +11,26 @@
 <br/><br/>
 
 ## Goal
-___
+
 To study and simulate data pipeline using various DB
 <br/><br/>
 
 ## Architecture
-___
-This project follows Lambda Architecture
 
-<img src= "./images/lambda_architecture.png"/>
+This project follows Lambda Architecture
+<p align="center">
+<img src= "./images/lambda_architecture.png" />
+</p>
 <br/><br/>
 
 ## Installation
-___
+
 You can use any part of the project independently.
 
 To install a part, go to the part directory and follow the instructions.
 <br/><br/>
 
 ## Poject Structure
-___
 
 ### app
 ---
