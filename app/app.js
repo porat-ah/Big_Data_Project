@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+var bodyParser = require('body-parser');
 const socketIO = require('socket.io');
 const server = express()
   .use(app)
@@ -9,13 +10,19 @@ module.exports = io
 
 app.set('views', './views');
 app.set('view engine', 'ejs');
-app.use(express.static('./public'))
+app.use(express.static('./public'));
+app.use( bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
-const dashboard = require('./dashboard/controller')
-app.use(dashboard)
+// const dashboard = require('./dashboard/controller')
+// app.use(dashboard)
 
 
 
 const association = require('./association/controller')
 app.use(association)
+
+const search = require('./search/controller')
+app.use(search)
+
