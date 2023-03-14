@@ -76,22 +76,20 @@ async function setIndex(m){
 	var fullDate = new Date(m["time"]);
 	m['date'] = fullDate.getDate()+'-'+(fullDate.getMonth()+1)+'-'+fullDate.getFullYear();
 	m['timestamp'] = Date.parse(m["time"]);
-	m['process_duration'] = 'pending';
+	m['order_duration'] = 'pending';
 	var numId = m['id'];
 	delete m.branch_name;
 	const exists = await client.exists({
     index: ind,id: numId
 	});
-	console.log(exists);
 	if (exists){
 		const result = await client.search({index:ind,query:{match:{id:numId}}});
-		console.log(result.hits.hits);
 		var start = (result.hits.hits)[0]._source.timestamp;
 		var duration = new Date(start - m['timestamp']);
 		var durationTime = duration.getHours()+':'+duration.getMinutes()+':'+duration.getSeconds();		
 		await client.update({index:ind,id:numId,
 		doc:{
-			'process_duration': durationTime,'order_status':m['order_status']}});
+			'order_duration': durationTime,'order_status':m['order_status']}});
 	} else{				
 		await client.index({
 			index: ind,
@@ -107,11 +105,9 @@ function indexName(ind){
 async function eSearchAll(ind,q){
 	const result = await client.search({index:ind,body:{query:{match_all:q}}},{ignore:[404]});
 	if ('hits' in result){
-		console.log(result.hits.hits);
 		return result.hits.hits;
 	}else{
-		console.log({});
-		return {};
+		return [];
 	}
 }
 
