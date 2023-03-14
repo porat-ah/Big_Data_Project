@@ -11,7 +11,7 @@ const client = new MongoClient(url);
 const connection = new bigml.BigML(`${process.env.BIGML_USER_NAME}`,`${process.env.BIGML_API_KEY}`);
 
 
-async function mongoImp(startDate,endDate) {
+async function createPredictions(startDate,endDate,cb) {
   try {
 	await client.connect();
     const database = client.db("Pizza");
@@ -39,7 +39,6 @@ async function mongoImp(startDate,endDate) {
     await client.close();
   }
   var results = [];
-  //await writeFile(setPred);
   var source = new bigml.Source(connection);
   source.create('./orders.json',function(error,sourceInfo){
 	  if(!error && sourceInfo){
@@ -68,11 +67,10 @@ async function mongoImp(startDate,endDate) {
 							}
 							var support = Math.round(consequentCount/totalCount*100000) / 100000;
 							var confidence = pred.object.confidence;
-							// console.log(`Antecedent: ${antecedent}`);console.log(`Consequent: ${consequent}`);console.log(`Support: ${support}`);console.log(`Confidence: ${confidence}`);
 							results.push({'Antecedent': antecedent,'Consequent':consequent,'Support':support,'Confidence':confidence});
 							if (results.length >= toppings.length){ // last callback ended
 								deleteSource(source,sourceInfo);
-								sendResult(results);
+								cb(results);
 							}
 							});
 					}
@@ -83,10 +81,12 @@ async function mongoImp(startDate,endDate) {
 	  }
   });
 }
-
-async function sendResult(results){
+/*
+function sendResult(results){
 	console.log(JSON.stringify(results, null,'\t'));
 }
+createPredictions(Date.parse('24 Feb 2023 00:00:00 GMT'),Date.parse('24 Feb 2023 23:59:59 GMT'),sendResult).catch(console.dir);
+*/
 async function deleteSource(source,sourceInfo){// cannot delete all from node...
 	  source.delete(sourceInfo,true,function(error,result){
 		  if(!error && result){
@@ -94,5 +94,3 @@ async function deleteSource(source,sourceInfo){// cannot delete all from node...
 		  }
 	  });
   }
-  
-mongoImp(Date.parse('24 Feb 2023 00:00:00 GMT'),Date.parse('24 Feb 2023 23:59:59 GMT')).catch(console.dir);
