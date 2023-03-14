@@ -1,9 +1,6 @@
 const express = require('express')
 const router = express.Router()
-// const dashboard = require('./dashboard');
-// const redis = require('./redis_connector')
-// const io = require('../app')
-
+const bigML = require('./big_ml_connector')
 
 router.get('/association', async (req, res) => {
   d = new Date()
@@ -24,7 +21,6 @@ router.get('/association', async (req, res) => {
 })
 
 router.post("/association", (req, res)=> {
-  console.log(req.body)
   d = new Date()
   var hr = d.getHours();
   var min = d.getMinutes();
@@ -33,48 +29,15 @@ router.post("/association", (req, res)=> {
   }
   var data = {
     show_list: true,
-    rows: [
-      {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'},
-    {Antecedent: 'olive', Consequent: 'mashroom', Support: '70',Confidance: '30'}
-  ],
+    rows: [],
     time: `${hr}:${min}`,
     association_active: "active",
     dashboard_active: "",
     search_active: "",
     page_title: "Association"
   };
-  res.render("pages/association", data)
+  sr = bigML.create_sendResults(data, res);
+  bigML.createPredictions(req.body.start,req.body.end,sr);
 })
 
 module.exports = router
