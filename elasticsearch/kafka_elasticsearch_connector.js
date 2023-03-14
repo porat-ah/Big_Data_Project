@@ -92,7 +92,7 @@ async function setIndex(m){
 		await client.update({index:ind,id:numId,
 		doc:{
 			'process_duration': durationTime,'order_status':m['order_status']}});
-	} else{		
+	} else{				
 		await client.index({
 			index: ind,
 			id: numId,
@@ -132,5 +132,9 @@ async function deleteAll(ind){
 console.log('connecting..');
 consumer.connect();
 
+module.exports= {
+	eSearchAll:eSearchAll,
+	indexName:indexName
+}
 
 

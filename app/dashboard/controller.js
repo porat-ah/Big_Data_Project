@@ -17,6 +17,7 @@ router.get('/', async (req, res) => {
     time: `${hr}:${min}`,
     association_active: "",
     dashboard_active: "active",
+    search_active: "",
     page_title: "Dashboard"
   };
   res.render("pages/dashboard", data)

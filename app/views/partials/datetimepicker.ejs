@@ -1,34 +1,32 @@
-<div class="col-lg-2 col-md-2 col-sm-2 ">
-       <div class="card card-stats">
-         <div class="card-header card-header-success card-header-icon">
-           <div class="card-icon">
-             <i class="material-icons">date_range</i>
-           </div>
-           <h3 class="card-title">start
-           </h3>
-           <input type="date" id="start" name="trip-start"
-                                   value="2023-07-22"
-                                   min="2023-01-01" max="2023-12-31">
-         </div>
- </div>
+<div class=" col-md-12">
+  <div class="card card-stats">
+    <div class="card-header card-header-primary card-header-icon">
+      <div class="card-icon">
+        <i class="material-icons">date_range</i>
+      </div>
+      <p class="card-category"></p>
+      <form action="" method="post">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+            <label class="control-label"> start</label>
+            <input class= "form-control" type="date" id="start" name="start"
+                    value="2023-01-01"
+                    min="2023-01-01" max="2023-12-31">
+          </div>
+          <div class="form-group col-md-4">
+            <label class="control-label"> end</label>
+            <input class= "form-control" type="date" id="end" name="end"
+                    value="2023-01-01"
+                    min="2023-01-01" max="2023-12-31">
+          </div>
+        <button type= "submit" class="btn btn-rose btn-round btn-sm">
+          <i class="material-icons">model_training</i> Run Model
+        </button>
+      </div>
+      </form>
+    </div>
+  </div>
 </div>
-<div class="col-lg-2 col-md-2 col-sm-2  ">
-       <div class="card card-stats">
-         <div class="card-header card-header-info card-header-icon">
-           <div class="card-icon">
-             <i class="material-icons">date_range</i>
-           </div>
-           <h3 class="card-title">end
-           </h3>
-           <input type="date" id="end" name="trip-start"
-           value="2023-07-22"
-           min="2023-01-01" max="2023-12-31">
-         </div>
- </div>
-</div>
-<button class="btn btn-rose btn-round btn-sm">
-  <i class="material-icons">model_training</i> Run Model
-</button>
 
 
 
