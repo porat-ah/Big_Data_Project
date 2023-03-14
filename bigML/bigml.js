@@ -94,3 +94,7 @@ async function deleteSource(source,sourceInfo){// cannot delete all from node...
 		  }
 	  });
   }
+
+  module.exports = {
+    createPredictions:createPredictions
+}
