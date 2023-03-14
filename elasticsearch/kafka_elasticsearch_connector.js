@@ -136,5 +136,10 @@ async function deleteAll(ind){
 console.log('connecting..');
 consumer.connect();
 
+module.exports= {
+	eSearchAll:eSearchAll,
+	indexName:indexName
+}
+
 
 

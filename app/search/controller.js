@@ -1,8 +1,7 @@
 const express = require('express')
 const router = express.Router()
-// const dashboard = require('./dashboard');
-// const redis = require('./redis_connector')
-// const io = require('../app')
+const ES = require('./ES_connector');
+
 
 
 router.get('/search', async (req, res) => {
@@ -23,7 +22,7 @@ router.get('/search', async (req, res) => {
   res.render("pages/search", data)
 })
 
-router.post("/search", (req, res)=> {
+router.post("/search", async (req, res)=> {
   console.log(req.body)
   d = new Date()
   var hr = d.getHours();
@@ -33,8 +32,7 @@ router.post("/search", (req, res)=> {
   }
   var data = {
     show_list: true,
-    rows: [
-  ],
+    rows: await ES.search(req.body.branch, req.body.Date),
     time: `${hr}:${min}`,
     association_active: "",
     dashboard_active: "",
