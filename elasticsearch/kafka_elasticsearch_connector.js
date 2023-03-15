@@ -73,35 +73,29 @@ consumer.on('event.log', function(log) {
 
 async function setIndex(m){
 	var ind = indexName(m['branch_name']);
+	var fullDate = new Date(m["time"]);
+	m['date'] = fullDate.getDate()+'-'+(fullDate.getMonth()+1)+'-'+fullDate.getFullYear();
 	m['timestamp'] = Date.parse(m["time"]);
-	m['process_duration'] = 'pending';
+	m['order_duration'] = 'pending';
 	var numId = m['id'];
 	delete m.branch_name;
 	const exists = await client.exists({
     index: ind,id: numId
 	});
-	console.log(exists);
 	if (exists){
-		console.log('update index');
 		const result = await client.search({index:ind,query:{match:{id:numId}}});
-		console.log(result.hits.hits);
 		var start = (result.hits.hits)[0]._source.timestamp;
-		console.log(start);
-		console.log(m['timestamp']);
 		var duration = new Date(start - m['timestamp']);
-		console.log(duration);		
+		var durationTime = duration.getHours()+':'+duration.getMinutes()+':'+duration.getSeconds();		
 		await client.update({index:ind,id:numId,
 		doc:{
-			'process_duration': duration,'order_status':m['order_status']}});
-		console.log('update');
-	} else{
-		console.log('create index');		
+			'order_duration': durationTime,'order_status':m['order_status']}});
+	} else{				
 		await client.index({
 			index: ind,
 			id: numId,
 			document: m
 		});
-		console.log('index created');
 	}
 }
 function indexName(ind){
@@ -111,11 +105,9 @@ function indexName(ind){
 async function eSearchAll(ind,q){
 	const result = await client.search({index:ind,body:{query:{match_all:q}}},{ignore:[404]});
 	if ('hits' in result){
-		console.log(result.hits.hits);
 		return result.hits.hits;
 	}else{
-		console.log({});
-		return {};
+		return [];
 	}
 }
 
@@ -140,6 +132,5 @@ module.exports= {
 	eSearchAll:eSearchAll,
 	indexName:indexName
 }
-
 
 
