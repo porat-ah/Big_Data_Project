@@ -1,3 +1,5 @@
+This folder contains a nodejs connector that consumes data from [cloudkarafka](https://www.cloudkarafka.com/) to a local docker container redis server
+
 # node
 install the packages:
 ```
