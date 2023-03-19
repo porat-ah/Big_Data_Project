@@ -1,6 +1,6 @@
 const bigml = require('bigml');
 const fs = require('fs');
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config({ path: './.env' })
 const MongoClient = require("mongodb").MongoClient;
 
 

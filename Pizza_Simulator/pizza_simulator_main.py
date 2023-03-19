@@ -4,8 +4,8 @@ from pizza_simulator_producer import *
 import numpy as np
 
 def branch_generator(loc, id ,name):
-    average_order_time= np.random.randint(3, 5, size= 1)[0]
-    std_order_time= 1 #np.random.randint(.2, .7, size= 1)[0]
+    average_order_time= np.random.randint(2, 3, size= 1)[0]
+    std_order_time= 1 #np.random.randint(2, 7, size= 1)[0]
     toppings_dist= np.random.randint(0, 100, size= 6)
     toppings_dist = toppings_dist/ (toppings_dist.sum())
     num_of_topping_dist= np.random.randint(0, 100, size= 3)

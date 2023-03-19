@@ -1,5 +1,4 @@
 function create_cards(info) {
-   console.log(info)
      return [
         { title: "open orders", value: info[0], unit: "orders",  icon: "local_pizza" , color: "card-header-danger" },
         { title: "number of orders today", value: info[1], unit: "orders",  icon: "assignment_turned_in", color: "card-header-success" },

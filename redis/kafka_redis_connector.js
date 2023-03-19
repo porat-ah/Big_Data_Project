@@ -1,7 +1,7 @@
 const Kafka = require("node-rdkafka");
 const redis = require('redis-promisify');
 const schedule = require('node-schedule');
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config({ path: './.env' })
 var utils = require('./utils');
 
 const kafkaConf = {
@@ -31,14 +31,13 @@ consumer.on("error", function(err) {
 
 
 consumer.on("ready", function(arg) {
-  console.log(`Consumer ${arg.name} ready`);
+  console.log(`Consumer ${arg.name} ready redis`);
   consumer.subscribe(topics);
   consumer.consume();
 });
 
 consumer.on('data', function(m) {
   m = JSON.parse(m.value.toString());
-  console.log(m);
   if (m["message_type"] == "branch status") {
       utils.branch_message(m, client);
   }
@@ -51,7 +50,7 @@ consumer.on('data', function(m) {
 });
 
 consumer.on("disconnected", function(arg) {
-  console.log(`Consumer ${arg.name} disconnected`);
+  console.log(`Consumer ${arg.name} disconnected redis`);
   process.exit();
 });
 

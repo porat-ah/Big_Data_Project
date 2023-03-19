@@ -11,8 +11,6 @@ function create_sendResults(data, res){
 function createPredictions(startDate, endDate, sendResult) {
     startDate = Date.parse(startDate +' 00:00:00 GMT')
     endDate = Date.parse(endDate +' 23:59:59 GMT')
-    console.log(startDate)
-    console.log(endDate)
     if (startDate <= endDate) {
         bigML.createPredictions(startDate,endDate , sendResult)
     }

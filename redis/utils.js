@@ -29,11 +29,11 @@ async function branch_message(message, client) {
 async function order_message(message, client) {
     if (message['order_status'] == 'finished') {
         client.decrAsync('open_orders');
-        avg_time(message, client);
-        branch_avg_time(message, client);
         order_dist_by_location(message, client);
         order_to_time(message, client);
-        client.delAsync(`order_${message['id']}_time`)
+        await avg_time(message, client);
+        await branch_avg_time(message, client);
+        client.delAsync(`order_${message['id']}_time`);
 
     }
     else{
@@ -45,9 +45,16 @@ async function order_message(message, client) {
     }
 }
 
+async function get_time(key, client){
+    while (new Date(await client.getAsync(key)).getFullYear() == 1970){
+        await new Promise(resolve => setTimeout(resolve, 10000));
+    }
+    return await client.getAsync(key);
+}
+
 async function avg_time(message, client){
     var new_time_f = new Date(message['time']);
-    var new_time_s = new Date(await client.getAsync(`order_${message['id']}_time`));
+    var new_time_s = new Date(await get_time(`order_${message['id']}_time`, client));
     var diff = diff_minutes(new_time_f, new_time_s);
     var old_avg = Number(await client.getAsync('avg_time'));
     var num = Number(await client.getAsync('num_of_finished_orders'));
@@ -61,7 +68,7 @@ async function avg_time(message, client){
 
 async function branch_avg_time(message, client) {
     var new_time_f = new Date(message['time']);
-    var new_time_s = new Date(await client.getAsync(`order_${message['id']}_time`));
+    var new_time_s = new Date(await get_time(`order_${message['id']}_time`, client));
     var diff = diff_minutes(new_time_f, new_time_s);
     var old_avg = Number(await client.getAsync(`avg_time_branch_${message['branch_id']}`));
     var num = Number(await client.getAsync(`num_of_finished_orders_branch_${message['branch_id']}`));

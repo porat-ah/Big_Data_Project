@@ -23,7 +23,6 @@ router.get('/search', async (req, res) => {
 })
 
 router.post("/search", async (req, res)=> {
-  console.log(req.body)
   d = new Date()
   var hr = d.getHours();
   var min = d.getMinutes();

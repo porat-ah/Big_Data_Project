@@ -13,9 +13,8 @@ async function cards_info() {
 async function orders_time() {
     var num_of_oreders_in_time = []
     for (let i = 0; i < 24; i++) {
-        num_of_oreders_in_time.push([`${i}`, await client.getAsync(`num_of_orders_in_time_${i}:0`)] )
+        num_of_oreders_in_time.push([`${i}`, await client.getAsync(`num_of_orders_in_time_${i}`)] )
     }
-    console.log(num_of_oreders_in_time);
     return num_of_oreders_in_time;
     
 }
@@ -33,7 +32,6 @@ async function top_5_toppings(){
     for (let i = 0; i < 5; i++) {
         toppings_5.push([toppings[number_of_toppings_ordered[i][1]], number_of_toppings_ordered[i][0]]);
     }
-    console.log(toppings_5)
     return toppings_5;
 }
 
@@ -54,7 +52,6 @@ async function top_5_branches() {
         branch = [await client.getAsync(`branch_id_${branches_id[branches_time[i][1]]}_name`), (branches_time[i][0]).toFixed()];
         branches.push(branch);
     }
-    console.log(branches)
     return branches;
 }
 
@@ -80,7 +77,6 @@ async function orders_location(){
         [ 'Central', 33.333333333333336 ],
         [ 'South', 75 ]
       ]
-    console.log(num_of_oreders_in_location)
     return num_of_oreders_in_location;
 }
 

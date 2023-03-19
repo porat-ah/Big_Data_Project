@@ -24,7 +24,6 @@ router.get('/', async (req, res) => {
 })
 
 io.on("connection", async (socket) => {  
-  console.log("conncted");
   io.emit("top_5_branches", dashboard.create_chart(await redis.top_5_branches()));
   io.emit("top_5_toppings", dashboard.create_chart(await redis.top_5_toppings()));
   io.emit("orders_time", dashboard.create_chart(await redis.orders_time()));

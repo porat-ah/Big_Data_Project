@@ -8,15 +8,15 @@ const server = express()
 const io = socketIO(server);
 module.exports = io
 
-app.set('views', './views');
+app.set('views', './app/views');
 app.set('view engine', 'ejs');
-app.use(express.static('./public'));
+app.use(express.static('./app/public'));
 app.use( bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-// const dashboard = require('./dashboard/controller')
-// app.use(dashboard)
+const dashboard = require('./dashboard/controller')
+app.use(dashboard)
 
 
 

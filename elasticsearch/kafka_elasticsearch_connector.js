@@ -1,5 +1,5 @@
 const Kafka = require("node-rdkafka");
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config({ path: './.env' })
 const { Client } = require('@elastic/elasticsearch');
 
 
@@ -37,14 +37,13 @@ consumer.on("error", function(err) {
 
 
 consumer.on("ready", async function(arg) {
-  console.log(`Consumer ${arg.name} ready`);
+  console.log(`Consumer ${arg.name} ready ES`);
   consumer.subscribe(topics);
   consumer.consume();
 });
 
 consumer.on('data', async function(m) {
   m = JSON.parse(m.value.toString());
-  console.log(m);
   if (m["message_type"] == "order") {
 	  
 	  try{
@@ -57,7 +56,7 @@ consumer.on('data', async function(m) {
 });
 
 consumer.on("disconnected", async function(arg) {
-  console.log(`Consumer ${arg.name} disconnected`);
+  console.log(`Consumer ${arg.name} disconnected ES`);
   process.exit();
 });
 
@@ -118,8 +117,6 @@ async function deleteAll(ind){
 	console.log('deleted indices...');
 }
 
-console.log('connecting..');
 consumer.connect();
-
-
+deleteAll("*");
 

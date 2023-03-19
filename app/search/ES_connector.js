@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config({ path: './.env' })
 const { Client } = require('@elastic/elasticsearch');
 
 
@@ -22,7 +22,6 @@ async function eSearchAll(ind,q){
 }
 
 async function search(branch_name, date) {
-	console.log(branch_name);
 	var data_arr = await eSearchAll(indexName(branch_name), {'date':date});
 	res = [];
 	for (row in data_arr){
