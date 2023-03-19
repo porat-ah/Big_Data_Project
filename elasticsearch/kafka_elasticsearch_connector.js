@@ -102,14 +102,7 @@ function indexName(ind){
 	var newInd = ind.toLowerCase();
 	return newInd.replace(/[\s_,-\/\\\*\?"<>\|]/g,"");
 }
-async function eSearchAll(ind,q){
-	const result = await client.search({index:ind,body:{query:{match_all:q}}},{ignore:[404]});
-	if ('hits' in result){
-		return result.hits.hits;
-	}else{
-		return [];
-	}
-}
+
 
 async function deleteAll(ind){
 	await client.indices.delete({
@@ -128,9 +121,5 @@ async function deleteAll(ind){
 console.log('connecting..');
 consumer.connect();
 
-module.exports= {
-	eSearchAll:eSearchAll,
-	indexName:indexName
-}
 
 
