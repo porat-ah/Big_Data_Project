@@ -1,5 +1,5 @@
 const Kafka = require("node-rdkafka");
-require('dotenv').config({ path: './.env' })
+require('dotenv').config({ path: '../.env' })
 const { Client } = require('@elastic/elasticsearch');
 
 
@@ -30,14 +30,13 @@ const client = new Client({ node: url });
 
 
 
-
 consumer.on("error", function(err) {
   console.error(err);
 });
 
 
 consumer.on("ready", async function(arg) {
-  console.log(`Consumer ${arg.name} ready ES`);
+  console.log(`Consumer ${arg.name} ready`);
   consumer.subscribe(topics);
   consumer.consume();
 });
@@ -56,7 +55,7 @@ consumer.on('data', async function(m) {
 });
 
 consumer.on("disconnected", async function(arg) {
-  console.log(`Consumer ${arg.name} disconnected ES`);
+  console.log(`Consumer ${arg.name} disconnected`);
   process.exit();
 });
 
@@ -84,8 +83,8 @@ async function setIndex(m){
 	if (exists){
 		const result = await client.search({index:ind,query:{match:{id:numId}}});
 		var start = (result.hits.hits)[0]._source.timestamp;
-		var duration = new Date(start - m['timestamp']);
-		var durationTime = duration.getHours()+':'+duration.getMinutes()+':'+duration.getSeconds();		
+		var duration = (m['timestamp'] - start)/60000;
+		var durationTime = Math.round(duration) + " minutes";
 		await client.update({index:ind,id:numId,
 		doc:{
 			'order_duration': durationTime,'order_status':m['order_status']}});
@@ -117,6 +116,8 @@ async function deleteAll(ind){
 	console.log('deleted indices...');
 }
 
+console.log('connecting..');
 consumer.connect();
-deleteAll("*");
+//deleteAll('*');
+
 
