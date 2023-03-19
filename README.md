@@ -45,12 +45,12 @@ MVC that creates the dashboard with connection to the REDIS DB
 #### app/association
 MVC that creates an association rule model using instructions given by the user
 
-![_](Association example.gif)
+![](Association example.gif)
 
 #### app/search
 MVC that handles a search engine for the user 
 
-![_](Search example.gif)
+![](Search example.gif)
 
 ### bigML
 ---
