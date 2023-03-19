@@ -17,7 +17,7 @@ async function createPredictions(startDate,endDate,cb) {
     const database = client.db("Pizza");
     const orders = database.collection("Orders");
 
-    const result = await orders.find({timestamp:{$gt:startDate,$lt:endDate}},{projection: {toppings:1} }).toArray();
+    const result = await orders.find({timestamp:{$gt:startDate,$lt:endDate},order_status:"in_process"},{projection: {toppings:1} }).toArray();
 	jsonResult = JSON.stringify(result,null,'\t');
 	jsonObj = JSON.parse(jsonResult);
     //console.log(`${jsonResult}`);
@@ -81,12 +81,7 @@ async function createPredictions(startDate,endDate,cb) {
 	  }
   });
 }
-/*
-function sendResult(results){
-	console.log(JSON.stringify(results, null,'\t'));
-}
-createPredictions(Date.parse('24 Feb 2023 00:00:00 GMT'),Date.parse('24 Feb 2023 23:59:59 GMT'),sendResult).catch(console.dir);
-*/
+
 async function deleteSource(source,sourceInfo){// cannot delete all from node...
 	  source.delete(sourceInfo,true,function(error,result){
 		  if(!error && result){
