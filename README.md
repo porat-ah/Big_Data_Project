@@ -50,7 +50,7 @@ MVC that creates an association rule model using instructions given by the user
 #### app/search
 MVC that handles a search engine for the user 
 
-![](Search example.gif)
+![](search-example.gif)
 
 ### bigML
 ---
