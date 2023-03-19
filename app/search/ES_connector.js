@@ -1,8 +1,29 @@
-const ES = require('../../elasticsearch/kafka_elasticsearch_connector')
+require('dotenv').config({ path: '../.env' })
+const { Client } = require('@elastic/elasticsearch');
+
+
+// Connection URL
+const url = `http://localhost:${process.env.ELASTICSEARCH_PORT}`;
+
+const client = new Client({ node: url });
+
+function indexName(ind){
+	var newInd = ind.toLowerCase();
+	return newInd.replace(/[\s_,-\/\\\*\?"<>\|]/g,"");
+}
+
+async function eSearchAll(ind,q){
+	const result = await client.search({index:ind,body:{query:{match_all:q}}},{ignore:[404]});
+	if ('hits' in result){
+		return result.hits.hits;
+	}else{
+		return [];
+	}
+}
 
 async function search(branch_name, date) {
 	console.log(branch_name);
-	var data_arr = await ES.eSearchAll(ES.indexName(branch_name), {'date':date});
+	var data_arr = await eSearchAll(indexName(branch_name), {'date':date});
 	res = [];
 	for (row in data_arr){
 		var currRow = data_arr[row]._source;
