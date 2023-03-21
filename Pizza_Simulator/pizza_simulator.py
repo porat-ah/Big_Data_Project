@@ -21,14 +21,17 @@ class simulation_manager:
         })
         produce(mes, producer)
         
+    def open_close_branches(self,time,producer):
+        for branch in self.branches:
+            produce(self.close_open(branch, time), producer)
 
     def run_simulation(self,time, producer): 
         for branch in self.branches:
             produce(self.close_open(branch, time), producer)
             if branch.branch.is_open():
-                p = [.75, .25]
+                p = [.94, .06]
                 if((time.hour >= 13 and time.hour <= 16 ) or (time.hour >= 19 and time.hour <= 21 )):
-                    p= [.3, .7]
+                    p= [.9, .1]
                 num_of_orders = np.random.choice([0, 1], size= 1, p= p)
                 orders_to_create = self.num_of_orders_to_create(branch, num_of_orders)
                 for b in orders_to_create:
@@ -47,8 +50,10 @@ class simulation_manager:
     def close_open(self, branch, time):
         closing = time.replace(hour=branch.closing_time.hour, minute=branch.closing_time.minute, second=0, microsecond=0)
         opening = time.replace(hour=branch.opening_time.hour, minute=branch.opening_time.minute, second=0, microsecond=0)
-        if time > closing and branch.branch.is_open():
-            return branch.branch.close()
+        if time > closing:
+            if branch.branch.is_open():
+                return branch.branch.close()
+            return None
         elif time > opening and (not branch.branch.is_open()):
             return branch.branch.open()
         else:

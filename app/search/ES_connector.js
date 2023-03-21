@@ -3,7 +3,7 @@ const { Client } = require('@elastic/elasticsearch');
 
 
 // Connection URL
-const url = `http://localhost:${process.env.ELASTICSEARCH_PORT}`;
+const url = `http://localhost:9200`;
 
 const client = new Client({ node: url });
 

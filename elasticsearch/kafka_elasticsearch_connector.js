@@ -1,10 +1,10 @@
 const Kafka = require("node-rdkafka");
-require('dotenv').config({ path: '../.env' })
+require('dotenv').config({ path: './.env' })
 const { Client } = require('@elastic/elasticsearch');
 
 
 // Connection URL
-const url = `http://localhost:${process.env.ELASTICSEARCH_PORT}`;
+const url = `http://localhost:9200`;
 
 
 const kafkaConf = {
@@ -36,7 +36,7 @@ consumer.on("error", function(err) {
 
 
 consumer.on("ready", async function(arg) {
-  console.log(`Consumer ${arg.name} ready`);
+  console.log(`Consumer ${arg.name} ready ES`);
   consumer.subscribe(topics);
   consumer.consume();
 });
@@ -55,7 +55,7 @@ consumer.on('data', async function(m) {
 });
 
 consumer.on("disconnected", async function(arg) {
-  console.log(`Consumer ${arg.name} disconnected`);
+  console.log(`Consumer ${arg.name} disconnected ES`);
   process.exit();
 });
 
@@ -116,7 +116,6 @@ async function deleteAll(ind){
 	console.log('deleted indices...');
 }
 
-console.log('connecting..');
 consumer.connect();
 //deleteAll('*');
 

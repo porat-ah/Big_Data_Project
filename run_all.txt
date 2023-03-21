@@ -1,1 +1,0 @@
-node kafka_redis_connector.js && kafka_elasticsearch_connector.js && 
