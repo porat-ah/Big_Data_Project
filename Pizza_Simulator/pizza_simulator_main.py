@@ -57,7 +57,9 @@ def main():
         order_prob = min(max(0.1, order_prob), 0.9)
         b = branch_generator(b[0], b[1], b[2])
         sm.create_branch(opening_time=datetime.time(_open, 0),closing_time= datetime.time(_close,0), branch= b, order_prob= order_prob, producer= producer)
+    time.sleep(60)
     sm.open_close_branches(datetime.datetime.now(), producer)
+    time.sleep(60)
     while(True):
         sm.run_simulation(datetime.datetime.now(), producer)
         time.sleep(60)

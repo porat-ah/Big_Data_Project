@@ -27,7 +27,6 @@ class simulation_manager:
 
     def run_simulation(self,time, producer): 
         for branch in self.branches:
-            produce(self.close_open(branch, time), producer)
             if branch.branch.is_open():
                 p = [.94, .06]
                 if((time.hour >= 13 and time.hour <= 16 ) or (time.hour >= 19 and time.hour <= 21 )):
@@ -117,7 +116,7 @@ class branch:
 
 
 class order_id:
-    num = 1
+    num = np.load('id.npy')[0]
     def __new__(cls):
         if not hasattr(cls, 'instance'):
             cls.instance = super(order_id, cls).__new__(cls)
@@ -126,6 +125,7 @@ class order_id:
     def __next__(self):
         out = self.num
         self.num += 1
+        np.save('id', [self.num])
         return out
 
 

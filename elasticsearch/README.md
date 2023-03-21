@@ -1,4 +1,4 @@
-
+This folder contains a nodejs connector that consumes data from [cloudkarafka](https://www.cloudkarafka.com/) to a local docker container elastic search server
 # node
 install the packages:
 ```
